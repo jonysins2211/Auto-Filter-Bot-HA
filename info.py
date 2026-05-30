@@ -67,7 +67,7 @@ else:
     UPDATES_SEND_CHANNEL = int(UPDATES_SEND_CHANNEL)
 
 # support group
-SUPPORT_GROUP = environ.get('SUPPORT_GROUP', '-1002077293491')
+SUPPORT_GROUP = environ.get('SUPPORT_GROUP', '')
 if len(SUPPORT_GROUP) == 0:
     logger.error('SUPPORT_GROUP is missing, exiting now')
     exit()
