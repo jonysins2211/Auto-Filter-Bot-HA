@@ -60,7 +60,7 @@ async def start(client, message):
          #   InlineKeyboardButton('🔎 sᴇᴀʀᴄʜ ɪɴʟɪɴᴇ', switch_inline_query_current_chat=''),
             InlineKeyboardButton('📚 ᴀʙᴏᴜᴛ', callback_data='about')
         ],[
-            InlineKeyboardButton('🤑 Buy Premium', url=f"https://t.me/{temp.U_NAME}?start=premium")
+            InlineKeyboardButton('🤑 Buy Premium', url=f"https://t.me/{temp.U_NAME}?start=premium", style=enums.ButtonStyle.DANGER)
         ],[
             InlineKeyboardButton('🌐 Mini WebApp 🌐', style=enums.ButtonStyle.SUCCESS, web_app=WebAppInfo(url=URL))
         ],[
@@ -162,7 +162,7 @@ async def start(client, message):
             )      
             if IS_STREAM:
                 btn = [[
-                    InlineKeyboardButton("✛ ᴡᴀᴛᴄʜ & ᴅᴏᴡɴʟᴏᴀᴅ ✛", callback_data=f"stream#{file['_id']}")
+                    InlineKeyboardButton("✛ ᴡᴀᴛᴄʜ & ᴅᴏᴡɴʟᴏᴀᴅ ✛", callback_data=f"stream#{file['_id']}", style=enums.ButtonStyle.PRIMARY)
                 ],[
                 #    InlineKeyboardButton('⚡️ ᴜᴘᴅᴀᴛᴇs', url=UPDATES_LINK),
                  #   InlineKeyboardButton('💡 ꜱᴜᴘᴘᴏʀᴛ', url=SUPPORT_LINK)
@@ -225,7 +225,7 @@ async def start(client, message):
     )
     if IS_STREAM:
         btn = [[
-            InlineKeyboardButton("✛ ᴡᴀᴛᴄʜ & ᴅᴏᴡɴʟᴏᴀᴅ ✛", callback_data=f"stream#{file_id}")
+            InlineKeyboardButton("✛ ᴡᴀᴛᴄʜ & ᴅᴏᴡɴʟᴏᴀᴅ ✛", callback_data=f"stream#{file_id}", style=enums.ButtonStyle.PRIMARY)
         ],[
           #  InlineKeyboardButton('⚡️ ᴜᴘᴅᴀᴛᴇs', url=UPDATES_LINK),
           #  InlineKeyboardButton('💡 ꜱᴜᴘᴘᴏʀᴛ', url=SUPPORT_LINK)
@@ -297,8 +297,8 @@ async def link(bot, message):
                 InlineKeyboardButton("🌐 Smart Player 🌐", url=vidking_url)
             ])
         btn.append([
-            InlineKeyboardButton("ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ", url=watch),
-            InlineKeyboardButton("ꜰᴀsᴛ ᴅᴏᴡɴʟᴏᴀᴅ", url=download)
+            InlineKeyboardButton("ᴡᴀᴛᴄʜ ᴏɴʟɪɴᴇ", url=watch, style=enums.ButtonStyle.PRIMARY),
+            InlineKeyboardButton("ꜰᴀsᴛ ᴅᴏᴡɴʟᴏᴀᴅ", url=download, style=enums.ButtonStyle.SUCCESS)
         ])
         btn.append([
             InlineKeyboardButton('❌ ᴄʟᴏsᴇ ❌', callback_data='close_data')
@@ -476,8 +476,8 @@ async def myplan(client, message):
     mp = await db.get_plan(message.from_user.id)
     if not await is_premium(message.from_user.id, client):
         btn = [[
-            InlineKeyboardButton('Activate Trial', callback_data='activate_trial'),
-            InlineKeyboardButton('Activate Plan', callback_data='activate_plan')
+            InlineKeyboardButton('Activate Trial', callback_data='activate_trial', style=enums.ButtonStyle.PRIMARY),
+            InlineKeyboardButton('Activate Plan', callback_data='activate_plan', style=enums.ButtonStyle.SUCCESS)
         ]]
         return await message.reply('You dont have any premium plan, please use /plan to activate plan', reply_markup=InlineKeyboardMarkup(btn))
     ex = mp.get('expire').strftime('%Y.%m.%d %H:%M:%S') if mp.get('expire') else 'Unknow'
@@ -489,9 +489,9 @@ async def plan(client, message):
     if not IS_PREMIUM:
         return await message.reply('Premium feature was disabled by admin')
     btn = [[
-        InlineKeyboardButton('Activate Trial', callback_data='activate_trial')
+        InlineKeyboardButton('Activate Trial', callback_data='activate_trial', style=enums.ButtonStyle.PRIMARY)
     ],[
-        InlineKeyboardButton('Activate Plan', callback_data='activate_plan')
+        InlineKeyboardButton('Activate Plan', callback_data='activate_plan', style=enums.ButtonStyle.SUCCESS)
     ]]
     plans_list = []
     for days, details in PREMIUM_PLANS.items():
