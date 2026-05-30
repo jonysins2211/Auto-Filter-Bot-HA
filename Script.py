@@ -49,21 +49,13 @@ I can't find the <b>{}</b> in my database! 🥲
 👉 Please read the Instructions to get better results.
 👉 Or not been released yet."""
     
-    IMDB_TEMPLATE = """✅ I Found: <code>{query}</code>
-
+    IMDB_TEMPLATE = """
 🏷 Title: <a href={url}>{title}</a>
 🎭 Genres: {genres}
 📆 Year: {year}
-🌟 Rating: {rating} / 10
-☀️ Languages: {languages}
-📀 RunTime: {runtime} Minutes
+🌟 Rating: {rating} / 10</b>"""
 
-🗣 Requested by: {message.from_user.mention}
-©️ Powered by: <b>{message.chat.title}</b>"""
-
-    FILE_CAPTION = """<i>{file_name}</i>
-
-🚫 ᴘʟᴇᴀsᴇ ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ ᴄʟᴏsᴇ ʙᴜᴛᴛᴏɴ ɪꜰ ʏᴏᴜ ʜᴀᴠᴇ sᴇᴇɴ ᴛʜᴇ ᴍᴏᴠɪᴇ 🚫"""
+    FILE_CAPTION = """"<b><a href="https://t.me/Movie_loverzz">{file_caption}</a></b>\n\n<b>⚜️ Powered By : <a href="https://t.me/Movie_loverzz">[ @Movie_Loverzz ]</a></b>"""
 
     WELCOME_TEXT = """👋 Hello {mention}, Welcome to {title} group! 💞"""
 
@@ -136,7 +128,7 @@ Support: @{}"""
 - ᴅᴇᴠʟᴏᴘᴇʀ - @HA_Bots"""
 
 
-    NEW_ADDED_TEMPLATE = """✅ New Added ✅
+    NEW_ADDED_TEMPLATE = """✅ New Files Added ✅
 
 🏷 Title: <a href={url}>{title}</a>
 🎭 Genres: {genres}
