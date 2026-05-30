@@ -1361,7 +1361,7 @@ watch_tmplt = """<!DOCTYPE html>
 <body>
 
 <header>
-    <span class="header-logo">HA Bots</span>
+    <span class="header-logo">MOVIE LOVERZ</span>
     <div id="file-name">{file_name}</div>
 </header>
 
@@ -1622,7 +1622,7 @@ error_tmplt = """<!DOCTYPE html>
 <body>
 
 <header>
-    <span class="header-logo">HA Bots</span>
+    <span class="header-logo">MOVIE LOVERZ</span>
 </header>
 
 <main>
