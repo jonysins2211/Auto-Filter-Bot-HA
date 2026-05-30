@@ -158,10 +158,10 @@ PAYMENT_ID = "movieloverz11220@okaxis"  # add your payment id like upi id or cry
 
 # Format -- Days: ['CURRENCY', Price]
 PREMIUM_PLANS = {
-    7: ['USD', 1], 
-    14: ['USD', 2],
-    30: ['USD', 3],
-    365: ['USD', 10]
+    30: ['Rupees', 25],
+    60: ['Rupees', 50],
+    180: ['Rupees', 150],
+    365: ['Rupees, 300]
 }
 PAYMENT_TYPE = "UPI"  # can be changed to "Crypto (TRC20)" or "PayPal" or etc....
 
