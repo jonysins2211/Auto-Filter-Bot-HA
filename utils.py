@@ -86,24 +86,33 @@ async def is_subscribed(bot, query):
     btn = []
     if await is_premium(query.from_user.id, bot):
         return btn
+
     stg = await db.get_bot_sttgs()
-    if not stg or not stg.get('FORCE_SUB_CHANNELS'):
+    if not stg:
         return btn
-    for id in stg.get('FORCE_SUB_CHANNELS').split(' '):
-        chat = await bot.get_chat(int(id))
+
+    fsub_channels = str(stg.get('FORCE_SUB_CHANNELS') or '').split()
+    for channel_id in fsub_channels:
+        chat_id = int(channel_id)
+        chat = await bot.get_chat(chat_id)
         try:
-            await bot.get_chat_member(int(id), query.from_user.id)
+            await bot.get_chat_member(chat_id, query.from_user.id)
         except UserNotParticipant:
+            invite_link = chat.invite_link
+            if not invite_link:
+                invite_link = (await bot.create_chat_invite_link(chat_id)).invite_link
             btn.append(
-                [InlineKeyboardButton(f'Join : {chat.title}', url=chat.invite_link)]
+                [InlineKeyboardButton(f'Join : {chat.title}', url=invite_link)]
             )
-    if stg and stg.get('REQUEST_FORCE_SUB_CHANNELS') and not await db.find_join_req(query.from_user.id):
-        id = stg.get('REQUEST_FORCE_SUB_CHANNELS')
-        chat = await bot.get_chat(int(id))
+
+    request_channel = stg.get('REQUEST_FORCE_SUB_CHANNELS')
+    if request_channel and not await db.find_join_req(query.from_user.id):
+        chat_id = int(request_channel)
+        chat = await bot.get_chat(chat_id)
         try:
-            await bot.get_chat_member(int(id), query.from_user.id)
+            await bot.get_chat_member(chat_id, query.from_user.id)
         except UserNotParticipant:
-            url = await bot.create_chat_invite_link(int(id), creates_join_request=True)
+            url = await bot.create_chat_invite_link(chat_id, creates_join_request=True)
             btn.append(
                 [InlineKeyboardButton(f'Request : {chat.title}', url=url.invite_link)]
             )

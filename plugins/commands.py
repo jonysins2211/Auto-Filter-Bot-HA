@@ -589,14 +589,18 @@ async def set_fsub(bot, message):
         _, ids = message.text.split(' ', 1)
     except ValueError:
         return await message.reply('usage: /set_fsub -100xxx -100xxx')
+    channel_ids = ids.split()
+    if not channel_ids:
+        return await message.reply('usage: /set_fsub -100xxx -100xxx')
+
     title = ""
-    for id in ids.split(' '):
+    for id in channel_ids:
         try:
             chat = await bot.get_chat(int(id))
             title += f'{chat.title}\n'
         except Exception as e:
             return await message.reply(f'ERROR: {e}')
-    await db.update_bot_sttgs('FORCE_SUB_CHANNELS', ids)
+    await db.update_bot_sttgs('FORCE_SUB_CHANNELS', ' '.join(channel_ids))
     await message.reply(f'added force subscribe channels: {title}')
 
         

@@ -29,6 +29,14 @@ async def pm_search(client, message):
 
     if message.from_user.id not in ADMINS and await db.get_repair_mode():
         return await message.reply_text("⚠️ <b>Sorry for the inconvenience, we are under Maintenance. We'll be back soon!</b>")
+
+    btn = await is_subscribed(client, message)
+    if btn:
+        return await message.reply_text(
+            "👋 Hello,\n\nPlease join my 'Updates Channel' and try again. 😇",
+            reply_markup=InlineKeyboardMarkup(btn),
+            parse_mode=enums.ParseMode.HTML
+        )
     
     stg = await db.get_bot_sttgs()
     if not stg.get('PM_SEARCH'):
