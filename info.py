@@ -132,7 +132,7 @@ if len(BIN_CHANNEL) == 0:
     exit()
 else:
     BIN_CHANNEL = int(BIN_CHANNEL)
-URL = environ.get("URL", "https://ml-file-2-link-bot-2c0a84b5a993.herokuapp.com/")
+URL = environ.get("URL", "https://ha-bots-0c35afd0f05a.herokuapp.com/")
 if len(URL) == 0:
     logger.error('URL is missing, exiting now')
     exit()
