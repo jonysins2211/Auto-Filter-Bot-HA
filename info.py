@@ -161,7 +161,7 @@ PREMIUM_PLANS = {
     30: ['Rupees', 25],
     60: ['Rupees', 50],
     180: ['Rupees', 150],
-    365: ['Rupees, 300]
+    365: ['Rupees', 300]
 }
 PAYMENT_TYPE = "UPI"  # can be changed to "Crypto (TRC20)" or "PayPal" or etc....
 
