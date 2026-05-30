@@ -42,7 +42,7 @@ PORT = int(environ.get('PORT', '80'))
 PICS = (environ.get('PICS', 'https://i.ibb.co/XZc29zjT/photo-2026-03-30-09-36-53-7622980343766712340.jpg')).split()
 
 # Bot Admins
-ADMINS = environ.get('ADMINS', '949657126')
+ADMINS = environ.get('ADMINS', '949657126 7161065239')
 if len(ADMINS) == 0:
     logger.error('ADMINS is missing, exiting now')
     exit()
@@ -110,7 +110,7 @@ SHORTLINK_API = environ.get("SHORTLINK_API", "36f1ae74ba1aa01e5bd73bdd0bc22aa915
 VERIFY_EXPIRE = int(environ.get('VERIFY_EXPIRE', 86400)) # Add time in seconds
 WELCOME_TEXT = environ.get("WELCOME_TEXT", script.WELCOME_TEXT)
 INDEX_EXTENSIONS = [extensions.lower() for extensions in environ.get('INDEX_EXTENSIONS', 'mp4 mkv').split()]
-PM_FILE_DELETE_TIME = int(environ.get('PM_FILE_DELETE_TIME', '3600'))
+PM_FILE_DELETE_TIME = int(environ.get('PM_FILE_DELETE_TIME', '600'))
 
 # boolean settings
 USE_CAPTION_FILTER = is_enabled('USE_CAPTION_FILTER', False)
@@ -152,7 +152,7 @@ EFFECT_IDS = [effect for effect in environ.get('EFFECT_IDS', '510484124575518058
 
 # for Premium 
 IS_PREMIUM = is_enabled('IS_PREMIUM', True)
-OWNER_USERNAME = environ.get("OWNER_USERNAME", "@Hawkeyee616")
+OWNER_USERNAME = environ.get("OWNER_USERNAME", "Hawkeyee616")
 PAYMENT_QR_CODE = "https://i.ibb.co/0VJJgJPV/photo-2026-04-22-15-27-50-7645564368435806224.jpg" # add your payment qr code link, like upi qr code or any crypto qr code link
 PAYMENT_ID = "movieloverz11220@okaxis"  # add your payment id like upi id or crypto address
 
