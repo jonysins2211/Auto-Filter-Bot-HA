@@ -90,7 +90,17 @@ JOIN_REQUEST_GRACE = timedelta(minutes=10)
 
 
 def _member_is_active(member):
-    return member.status not in (ChatMemberStatus.BANNED, ChatMemberStatus.LEFT)
+    if member.status in (ChatMemberStatus.BANNED, ChatMemberStatus.LEFT):
+        return False
+
+    # Telegram can return a restricted chat member for users who are not
+    # currently members anymore.  In that case Pyrogram exposes the real
+    # membership state through ``is_member`` instead of raising
+    # UserNotParticipant, so force-sub must treat it as not joined.
+    if member.status == ChatMemberStatus.RESTRICTED and getattr(member, 'is_member', True) is False:
+        return False
+
+    return True
 
 
 def _join_request_is_recent(req):
