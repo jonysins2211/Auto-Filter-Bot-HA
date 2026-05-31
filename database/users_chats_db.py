@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from info import BOT_ID, ADMINS, DATABASE_NAME, DATA_DATABASE_URL, FILES_DATABASE_URL, SECOND_FILES_DATABASE_URL, IMDB_TEMPLATE, WELCOME_TEXT, LINK_MODE, TUTORIAL, SHORTLINK_URL, SHORTLINK_API, SHORTLINK, FILE_CAPTION, IMDB, WELCOME, SPELL_CHECK, PROTECT_CONTENT, AUTO_DELETE, IS_STREAM, VERIFY_EXPIRE
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 
 files_db_client = AsyncIOMotorClient(FILES_DATABASE_URL)
 files_db = files_db_client[DATABASE_NAME]
@@ -120,12 +120,45 @@ class Database:
     async def delete_chat(self, grp_id):
         await self.grp.delete_many({'id': int(grp_id)})
 
-    async def find_join_req(self, id):
-        req = await self.req.find_one({'id': id})
-        return bool(req)
+    async def find_join_req(self, id, channel_id=None):
+        query = {'id': int(id)}
+        if channel_id is not None:
+            channel_id = int(channel_id)
+            req = await self.req.find_one({**query, 'channel_id': channel_id})
+            if req:
+                return req
 
-    async def add_join_req(self, id):
-        await self.req.insert_one({'id': id})
+            # Older deployments saved only the user id.  Return that record as a
+            # legacy match so the caller can decide whether it is still valid.
+            legacy_req = await self.req.find_one({**query, 'channel_id': {'$exists': False}})
+            return legacy_req
+        return await self.req.find_one(query)
+
+    async def has_join_req(self, id, channel_id=None):
+        return bool(await self.find_join_req(id, channel_id))
+
+    async def add_join_req(self, id, channel_id=None):
+        data = {
+            'id': int(id),
+            'requested_at': datetime.now(timezone.utc)
+        }
+        if channel_id is not None:
+            data['channel_id'] = int(channel_id)
+
+        await self.req.update_one(
+            {'id': data['id'], 'channel_id': data.get('channel_id')},
+            {'$set': data},
+            upsert=True
+        )
+
+    async def delete_join_req(self, id, channel_id=None):
+        query = {'id': int(id)}
+        if channel_id is not None:
+            query['$or'] = [
+                {'channel_id': int(channel_id)},
+                {'channel_id': {'$exists': False}}
+            ]
+        await self.req.delete_many(query)
 
     async def del_join_req(self):
         await self.req.drop()
