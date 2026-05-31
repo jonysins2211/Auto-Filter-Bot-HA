@@ -39,24 +39,13 @@ async def pm_search(client, message):
         )
     
     stg = await db.get_bot_sttgs()
-    if not stg.get('PM_SEARCH'):
+    if not stg.get('PM_SEARCH', True):
         return await message.reply_text('PM search was disabled!')
-    if await is_premium(message.from_user.id, client):
-        if not stg.get('AUTO_FILTER'):
-            return await message.reply_text('Auto filter was disabled!')
-        s = await message.reply(f"<b><i>🔎 `{message.text}` searching...</i></b>", reply_parameters=ReplyParameters(message_id=message.id))
-        await auto_filter(client, message, s)
-    else:
-        files = await get_search_results(message.text)
-        total = len(files)
-        btn = [[
-            InlineKeyboardButton("🗂 ᴄʟɪᴄᴋ ʜᴇʀᴇ 🗂", url=FILMS_LINK)
-        ],[
-            InlineKeyboardButton('🤑 Buy Premium', url=f"https://t.me/{temp.U_NAME}?start=premium", style=enums.ButtonStyle.DANGER)
-            ]]
-        reply_markup=InlineKeyboardMarkup(btn)
-        if int(total) != 0:
-            await message.reply_text(f'<b><i>🤗 ᴛᴏᴛᴀʟ <code>{total}</code> ʀᴇꜱᴜʟᴛꜱ ꜰᴏᴜɴᴅ ɪɴ ᴛʜɪꜱ ɢʀᴏᴜᴘ 👇</i></b>\n\nor buy premium subscription', reply_markup=reply_markup)
+    if not stg.get('AUTO_FILTER', True):
+        return await message.reply_text('Auto filter was disabled!')
+
+    s = await message.reply(f"<b><i>🔎 `{message.text}` searching...</i></b>", reply_parameters=ReplyParameters(message_id=message.id))
+    await auto_filter(client, message, s)
 
             
 
