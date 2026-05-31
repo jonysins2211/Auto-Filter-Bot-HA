@@ -1,10 +1,11 @@
 from pyrogram.errors import UserNotParticipant, FloodWait
+from pyrogram.enums import ChatMemberStatus
 from info import LONG_IMDB_DESCRIPTION, ADMINS, IS_PREMIUM, TIME_ZONE, TMDB_API_KEY, USE_CAPTION_FILTER, UPDATES_SEND_CHANNEL, FILMS_LINK
 import asyncio
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, LinkPreviewOptions
 from pyrogram import enums
 import re
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from database.users_chats_db import db
 from shortzy import Shortzy
 import requests, pytz
@@ -82,6 +83,25 @@ async def handle_next_back(data, offset=0, max_results=0):
         next_offset = 0
     return out_data, next_offset, total_results
 
+# Temporarily allow users who have just submitted a join request while
+# Telegram/admin approval is still pending.  Do not treat this as a permanent
+# subscription cache.
+JOIN_REQUEST_GRACE = timedelta(minutes=10)
+
+
+def _member_is_active(member):
+    return member.status not in (ChatMemberStatus.BANNED, ChatMemberStatus.LEFT)
+
+
+def _join_request_is_recent(req):
+    requested_at = req.get('requested_at') if req else None
+    if not isinstance(requested_at, datetime):
+        return False
+    if requested_at.tzinfo is None:
+        requested_at = requested_at.replace(tzinfo=timezone.utc)
+    return datetime.now(timezone.utc) - requested_at <= JOIN_REQUEST_GRACE
+
+
 async def is_subscribed(bot, query):
     btn = []
     if await is_premium(query.from_user.id, bot):
@@ -95,9 +115,13 @@ async def is_subscribed(bot, query):
     for channel_id in fsub_channels:
         chat_id = int(channel_id)
         chat = await bot.get_chat(chat_id)
+        needs_join = False
         try:
-            await bot.get_chat_member(chat_id, query.from_user.id)
+            member = await bot.get_chat_member(chat_id, query.from_user.id)
+            needs_join = not _member_is_active(member)
         except UserNotParticipant:
+            needs_join = True
+        if needs_join:
             invite_link = chat.invite_link
             if not invite_link:
                 invite_link = (await bot.create_chat_invite_link(chat_id)).invite_link
@@ -106,12 +130,24 @@ async def is_subscribed(bot, query):
             )
 
     request_channel = stg.get('REQUEST_FORCE_SUB_CHANNELS')
-    if request_channel and not await db.find_join_req(query.from_user.id):
+    if request_channel:
         chat_id = int(request_channel)
         chat = await bot.get_chat(chat_id)
+        needs_request = False
         try:
-            await bot.get_chat_member(chat_id, query.from_user.id)
+            member = await bot.get_chat_member(chat_id, query.from_user.id)
+            needs_request = not _member_is_active(member)
         except UserNotParticipant:
+            needs_request = True
+        if needs_request:
+            req = await db.find_join_req(query.from_user.id, chat_id)
+            if _join_request_is_recent(req):
+                return btn
+
+            # A stored join request is only a short grace-period marker.  If the
+            # user is no longer a channel member after that, remove the stale
+            # marker so old users who left must request/join again.
+            await db.delete_join_req(query.from_user.id, chat_id)
             url = await bot.create_chat_invite_link(chat_id, creates_join_request=True)
             btn.append(
                 [InlineKeyboardButton(f'Request : {chat.title}', url=url.invite_link)]

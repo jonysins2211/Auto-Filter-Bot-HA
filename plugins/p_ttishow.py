@@ -246,8 +246,8 @@ async def join_reqs(client, message: ChatJoinRequest):
     stg = await db.get_bot_sttgs()
     request_channel = stg.get('REQUEST_FORCE_SUB_CHANNELS') if stg else None
     if request_channel and message.chat.id == int(request_channel):
-        if not await db.find_join_req(message.from_user.id):
-            await db.add_join_req(message.from_user.id)
+        if not await db.has_join_req(message.from_user.id, message.chat.id):
+            await db.add_join_req(message.from_user.id, message.chat.id)
 
 
 @Client.on_message(filters.command("delreq") & filters.private & filters.user(ADMINS))
